@@ -88,31 +88,53 @@ class Bundler extends EventEmitter {
 
     // 返回默认的打包配置选项，如果有option，根据option的配置，没有则取默认配置，即所谓的零配置
     return {
+      // 输出目录
       outDir: Path.resolve(options.outDir || 'dist'),
+      // 输出文件名，例如parcel ./src/index.html --out-file main.html 会在dist目录生成入口文件main.html
       outFile: options.outFile || '',
+      /**
+       *  静态资源url,默认为/dist,即<script src="/dist/bee36a92319e68dd8473100fc33c03bd.js"></script>
+       *  若命令为parcel build ./src/index.html --public-url ./static/，则为<script src="static/bee36a92319e68dd8473100fc33c03bd.js"></script>
+       */
+      
       publicURL: publicURL,
+      //是否需要监听文件并在发生改变时重新编译它们，默认为 process.env.NODE_ENV !== 'production'
       watch: watch,
+      //是否开启缓存，默认为true
       cache: typeof options.cache === 'boolean' ? options.cache : true,
+      //缓存目录，默认为.cache
       cacheDir: Path.resolve(options.cacheDir || '.cache'),
+      //是否开启工作进程？默认为true
       killWorkers:
         typeof options.killWorkers === 'boolean' ? options.killWorkers : true,
+      //是否开启压缩，生产环境默认开启
       minify:
         typeof options.minify === 'boolean' ? options.minify : isProduction,
+      //默认为浏览器环境
       target: target,
+      //热模块重载
       hmr:
         target === 'node'
           ? false
           : typeof options.hmr === 'boolean' ? options.hmr : watch,
+      //默认不开启https    
       https: options.https || false,
+      //打包日志：3 = 输出所有内容，2 = 输出警告和错误, 1 = 输出错误，默认为3
       logLevel: typeof options.logLevel === 'number' ? options.logLevel : 3,
+      //入口文件，同第一个参数
       mainFile: this.mainFile,
+      //热模块socket 运行的端口，默认为0
       hmrPort: options.hmrPort || 0,
+      //根目录，
       rootDir: Path.dirname(this.mainFile),
+      //是否开启sourcemaps，默认true
       sourceMaps:
         typeof options.sourceMaps === 'boolean' ? options.sourceMaps : true,
+      //热模块重载主机名，默认为 ''
       hmrHostname:
         options.hmrHostname ||
         (options.target === 'electron' ? 'localhost' : ''),
+      //是否输出详细报告，默认为 false
       detailedReport: options.detailedReport || false
     };
   }
