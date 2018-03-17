@@ -35,7 +35,9 @@ class Bundler extends EventEmitter {
    */
   constructor(main, options = {}) {
     super();
+    //如果main参数为false，则为当前项目目录，负责为指定的文件路径
     this.mainFile = Path.resolve(main || '');
+    //初始化option打包默认的配置，即零配置
     this.options = this.normalizeOptions(options);
 
     this.resolver = new Resolver(this.options);
@@ -70,15 +72,21 @@ class Bundler extends EventEmitter {
   }
 
   normalizeOptions(options) {
+    // 是否是生产环境
     const isProduction =
       options.production || process.env.NODE_ENV === 'production';
+    //public 目录
     const publicURL =
       options.publicUrl ||
       options.publicURL ||
       '/' + Path.basename(options.outDir || 'dist');
+    //是否watch，boolean值，默认非
     const watch =
       typeof options.watch === 'boolean' ? options.watch : !isProduction;
+    //环境，默认浏览器browser
     const target = options.target || 'browser';
+
+    // 返回默认的打包配置选项，如果有option，根据option的配置，没有则取默认配置，即所谓的零配置
     return {
       outDir: Path.resolve(options.outDir || 'dist'),
       outFile: options.outFile || '',
